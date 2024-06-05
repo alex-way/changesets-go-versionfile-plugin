@@ -1,0 +1,39 @@
+// https://github.com/alex-way/changesets/blob/main/pkg/plugin/plugin.proto
+syntax = "proto3";
+
+package plugin;
+option go_package = "github.com/alex-way/changesets/pkg/plugin";
+
+service VersionGetterSetterService {
+    rpc GetVersion (GetVersionRequest) returns (GetVersionResponse);
+    rpc SetVersion (SetVersionRequest) returns (SetVersionResponse);
+  }
+
+message GetVersionRequest {
+    string file_path = 1;
+}
+
+message GetVersionResponse {
+    Status status = 1;
+    string version = 2;
+}
+
+message SetVersionRequest {
+    string version = 1;
+}
+
+message SetVersionResponse {
+    Status status = 1;
+}
+
+// The `Status` type defines a logical error model that is suitable for
+// different programming environments, including REST APIs and RPC APIs.
+message Status {
+    // A simple error code that can be easily handled by the client. The
+    // actual error code is defined by `google.rpc.Code`.
+    int32 code = 1;
+
+    // A developer-facing human-readable error message in English. It should
+    // both explain the error and offer an actionable resolution to it.
+    string message = 2;
+}

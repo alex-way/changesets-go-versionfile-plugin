@@ -12,26 +12,44 @@ pub fn deserialize_get_version_request(
     plugin::GetVersionRequest::decode(buf)
 }
 
-pub fn serialize_codegen_response(resp: &plugin::GetVersionResponse) -> Vec<u8> {
+pub fn serialize_get_version_response(resp: &plugin::GetVersionResponse) -> Vec<u8> {
     let mut buf = Vec::with_capacity(resp.encoded_len());
 
     resp.encode(&mut buf).unwrap();
     buf
 }
 
-pub fn create_get_version_response(req: plugin::GetVersionRequest) -> plugin::GetVersionResponse {
-    let file = req.inputs;
-    if let Some(file) = file {
-        let mut file = std::fs::File::open(file.path).unwrap();
-        let mut contents = String::new();
-        file.read_to_string(&mut contents).unwrap();
+pub fn handle_get_version_request(req: plugin::GetVersionRequest) -> plugin::GetVersionResponse {
+    let mut file = match std::fs::File::open(req.file_path) {
+        Ok(f) => f,
+        Err(e) => {
+            return plugin::GetVersionResponse {
+                version: "".to_string(),
+                status: Some(plugin::Status {
+                    code: 1,
+                    message: format!("Error opening file: {}", e),
+                }),
+            }
+        }
+    };
+
+    let mut contents = String::new();
+    if let Err(e) = file.read_to_string(&mut contents) {
         return plugin::GetVersionResponse {
-            version: contents.trim().to_string(),
+            version: "".to_string(),
+            status: Some(plugin::Status {
+                code: 1,
+                message: format!("Error reading file: {}", e),
+            }),
         };
     }
 
     plugin::GetVersionResponse {
-        version: "".to_string(),
+        version: contents.trim().to_string(),
+        status: Some(plugin::Status {
+            code: 0,
+            message: "".to_string(),
+        }),
     }
 }
 
@@ -45,8 +63,8 @@ fn main() -> Result<(), prost::DecodeError> {
         Err(_e) => std::process::exit(1),
     };
 
-    let resp = create_get_version_response(req);
-    let out = serialize_codegen_response(&resp);
+    let resp = handle_get_version_request(req);
+    let out = serialize_get_version_response(&resp);
 
     match io::stdout().write_all(&out) {
         Ok(result) => result,
