@@ -10,8 +10,8 @@ Create a `.changeset/config.json` file in your project root with the following c
 {
   "plugin": {
     "name": "versionfile",
-    "sha256": "beef1de60035053ad01eff83875999dc9918a65e1cffc006fca95c3bfbe55d70",
-    "url": "https://github.com/alex-way/changesets-go-versionfile-plugin/releases/download/0.0.1/versionfile.wasm",
+    "sha256": "67245629ec3b9447c4eeb6d7bbdb66ce36937e1c1cea6410d388f43f8bb68e17",
+    "url": "https://github.com/alex-way/changesets-go-versionfile-plugin/releases/download/0.0.2/versionfile.wasm",
     "versionedFile": ".changeset/version"
   }
 }
