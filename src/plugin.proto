@@ -5,25 +5,23 @@ package plugin;
 option go_package = "github.com/alex-way/changesets/pkg/plugin";
 
 service VersionGetterSetterService {
-    rpc GetVersion (GetVersionRequest) returns (GetVersionResponse);
-    rpc SetVersion (SetVersionRequest) returns (SetVersionResponse);
-  }
+    rpc Request (RequestMessage) returns (Response);
+}
 
 message GetVersionRequest {
     string file_path = 1;
 }
 
 message GetVersionResponse {
-    Status status = 1;
-    string version = 2;
-}
-
-message SetVersionRequest {
     string version = 1;
 }
 
+message SetVersionRequest {
+    string file_path = 1;
+    string version = 2;
+}
+
 message SetVersionResponse {
-    Status status = 1;
 }
 
 // The `Status` type defines a logical error model that is suitable for
@@ -36,4 +34,19 @@ message Status {
     // A developer-facing human-readable error message in English. It should
     // both explain the error and offer an actionable resolution to it.
     string message = 2;
+}
+
+message RequestMessage {
+    oneof request {
+        GetVersionRequest get_version = 1;
+        SetVersionRequest set_version = 2;
+    }
+}
+
+message Response {
+    Status status = 1;
+    oneof response {
+        GetVersionResponse get_version = 2;
+        SetVersionResponse set_version = 3;
+    }
 }
